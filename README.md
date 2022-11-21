@@ -1,3 +1,7 @@
+# WARNING 
+#### Incomplete, may or may not work, errors aren't handled properly \n I don't know if I'll complete it due to legal reasons but for now if you can add data and use mongodb you can use it on your own server or local host
+
+
 # stream-save
 
 - create an account at https://www.mongodb.com/
@@ -5,7 +9,7 @@
 - choose free tier plan
 - choose cluster name or use default
 - create cluster
-- create adn add a database user by adding username and password (make be diffrent from your account)
+- create adn add a database user by adding username and password (make be different from your account)
 - scroll down in add ip entries, ip address field enter "0.0.0.0" without inverted commas, click add entry
 - click finish and close
 - go to database
