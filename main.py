@@ -1,7 +1,8 @@
-from flask import Flask, Response, jsonify, url_for, abort
-from config import mclient
+from flask import Flask, request, jsonify, abort, redirect, render_template
 from functions.mongo.seriesdb import seriesStreams, seriesCatalog
 from functions.mongo.moviedb import movieStreams, movieCatalog
+from functions.manage import addMovie, addSeries, removeMovie, removeSeries
+from pymongo import MongoClient
 
 MANIFEST = {
     "id": "org.stremio.streamsave",
@@ -22,10 +23,14 @@ MANIFEST = {
         {'type': 'series', 'id': 'stream_save_series'},
     ],
 
+    'behaviorHints': {
+        'configurable': "true",
+    },
+
     "idPrefixes": ["tt"]
 }
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="./ui")
 
 
 def respond_with(data):
@@ -35,14 +40,20 @@ def respond_with(data):
     return resp
 
 
-@app.route('/manifest.json')
-def manifest():
+@app.route('/<user>/<passw>/<cluster>/manifest.json')
+def manifest_json(user, passw, cluster):
     return respond_with(MANIFEST)
 
 
-@app.route('/stream/<type>/<id>.json')
-def stream(type, id):
-    client = mclient
+@app.route('/manifest.json')
+def config_redirect():
+    return respond_with(MANIFEST)
+
+
+@app.route('/<user>/<passw>/<cluster>/stream/<type>/<id>.json')
+def stream(user, passw, cluster, type, id):
+    db_url = f"mongodb+srv://{user}:{passw}@{cluster}.mongodb.net"
+    client = MongoClient(db_url)
     if type not in MANIFEST['types']:
         abort(404)
     streams = {'streams': []}
@@ -57,13 +68,13 @@ def stream(type, id):
 
     if a is not None:
         streams['streams'].append(a['data'])
-        print(streams)
     return respond_with(streams)
 
 
-@app.route('/catalog/<type>/<id>.json')
-def addon_catalog(type, id):
-    client = mclient
+@app.route('/<user>/<passw>/<cluster>/catalog/<type>/<id>.json')
+def addon_catalog(user, passw, cluster, type, id):
+    db_url = f"mongodb+srv://{user}:{passw}@{cluster}.mongodb.net"
+    client = MongoClient(db_url)
     if type not in MANIFEST['types']:
         abort(404)
 
@@ -83,11 +94,60 @@ def addon_catalog(type, id):
     if c is not None:
         metaPreviews['metas'] = c
     else:
-        print("s")
         abort(404)
 
     return respond_with(metaPreviews)
 
 
+@app.route('/configure', methods=['GET', 'POST'])
+def configure():
+    if request.method == 'POST':
+        url = request.form['db_url']
+        url = url.replace("mongodb+srv://", "")
+        url = url.split('@')
+        user = url[0].split(':')[0]
+        passw = url[0].split(':')[1]
+        cluster = url[1].replace(".mongodb.net", "")
+        cluster = cluster.split('/')[0]
+
+        hostUrl = request.host_url.replace("http://", "") if "http" in request.host_url else request.host_url.replace(
+            "https://", "")
+        return redirect(f"stremio://{hostUrl}{user}/{passw}/{cluster}/manifest.json")
+    else:
+        return render_template("configure.html")
+
+
+@app.route('/manage', methods=['GET', 'POST'])
+def manage():
+    if request.method == 'POST':
+        db_url = request.form['db_url']
+        options = request.form['option']
+        type = request.form['type']
+        imdbID = request.form['imdbID']
+        stream = request.form['stream']
+
+        try:
+            if options == 'add':
+                if type == "movie":
+                    addMovie(imdbID, stream, db_url)
+                elif type == 'series':
+                    addSeries(imdbID, stream, db_url)
+            elif options == 'remove':
+                if type == "movie":
+                    removeMovie(imdbID, db_url)
+                elif type == 'series':
+                    removeSeries(imdbID, db_url)
+            return "Success"
+        except:
+            return "Failure, something went wrong"
+    else:
+        return render_template("manage.html")
+
+
+@app.route('/')
+def default():
+    return redirect('/configure')
+
+
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)

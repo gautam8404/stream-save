@@ -16,7 +16,7 @@ class Metadata:
 
     @staticmethod
     def identify_link(url: str) -> dict:
-        yt_pattern = re.compile(r'(?:https?:\/\/)?(?:[0-9A-Z-]+\.)?(?:youtube|youtu|youtube-nocookie)\.(?:com|be)\/(' \
+        yt_pattern = re.compile(r'(?:https?:\/\/)?(?:[0-9A-Z-]+\.)?(?:youtube|youtu|youtube-nocookie)\.(?:com|be)\/(' 
                                 r'?:watch\?v=|watch\?.+&v=|embed\/|v\/|.+\?v=)?([^&=\n%\?]{11})')
 
         magnet_pattern = re.compile(r"magnet:\?xt=urn:[a-z0-9]+:[a-zA-Z0-9]{32}")
@@ -112,7 +112,7 @@ class Metadata:
         catalog = self.make_meta(res)
         x = {'title': catalog['name']}
         y = self.identify_link(stream)
-        z = {**x , **y}
+        z = {**x, **y}
         streams = [{"_id": imdbId, 'data': z}]
 
         return catalog, streams

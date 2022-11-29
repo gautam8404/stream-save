@@ -1,6 +1,9 @@
-# WARNING 
-#### Incomplete, may or may not work, errors aren't handled properly \n I don't know if I'll complete it due to legal reasons but for now if you can add data and use mongodb you can use it on your own server or local host
+# Disclaimer 
+## Not me nor mongodb are responsible for whatever data you host in your own database this app is just a tool to add and remove data in mongodb in stremio format. Only user will be responsible for whatever they add
+## This project is made for learning purposes. I don’t encourage sharing of copyrighted content in any way
 
+# WARNING 
+#### errors aren't handled properly as I don't have much time right now if you encounter any error or problem feel free to open a GitHub issue
 
 # stream-save
 
@@ -16,7 +19,12 @@
 - click connect
 - click connect your application
 - copy your db url in 2nd box, make sure "Include full driver code example" checkbox is unchecked
-- go to config.py
-- replace 'YOUR_DB_URL' with db url you just copied, make sure it's inside inverted commas
-- now you can either host it in server or host it locally
-- copy git repo and run 'easy_add_remove.py' to add/remove data
+- go to addon configure page and install addon
+
+# How to add?
+
+- go to https://www.imdb.com/
+- search your movie/show
+- in the end of url there is id starting with tt example:- "tt0944947" copy that
+- go to /manage page of addon
+- follow instructions there if page redirects to success it'll be added into your database
