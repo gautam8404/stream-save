@@ -96,7 +96,7 @@ class Metadata:
 
     def _call(self, res):
         if res.status_code == 404:
-            raise MetaExceptions("Invalid ID")
+            raise MetaExceptions("Invalid IMDB ID")
         elif res.json() == {}:
             raise MetaExceptions("Invalid Type")
         elif res.status_code != 200:

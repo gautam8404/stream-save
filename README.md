@@ -1,6 +1,5 @@
 # Disclaimer 
-## Not me nor mongodb are responsible for whatever data you host in your own database this app is just a tool to add and remove data in mongodb in stremio format. Only user will be responsible for whatever they add
-## This project is made for learning purposes. I don’t encourage sharing of copyrighted content in any way
+### Not me nor mongodb are responsible for whatever data user host in your own database this app is just a tool to add and remove data in mongodb in stremio format. Only user will be responsible for whatever they add
 
 # WARNING 
 #### errors aren't handled properly as I don't have much time right now if you encounter any error or problem feel free to open a GitHub issue

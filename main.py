@@ -63,6 +63,7 @@ def stream(user, passw, cluster, type, id):
         s = seriesStreams(client)
     else:
         abort(404)
+        return
 
     a = s.find(id)
 
@@ -84,6 +85,7 @@ def addon_catalog(user, passw, cluster, type, id):
         catalog = seriesCatalog(client)
     else:
         abort(404)
+        return
 
     metaPreviews = {
 
@@ -110,8 +112,9 @@ def configure():
         cluster = url[1].replace(".mongodb.net", "")
         cluster = cluster.split('/')[0]
 
-        hostUrl = request.host_url.replace("http://", "") if "http" in request.host_url else request.host_url.replace(
-            "https://", "")
+        hostUrl = request.host_url.replace("https://", "") if "https" in request.host_url else request.host_url.replace(
+            "http://", "")
+        print(hostUrl)
         return redirect(f"stremio://{hostUrl}{user}/{passw}/{cluster}/manifest.json")
     else:
         return render_template("configure.html")
@@ -138,8 +141,8 @@ def manage():
                 elif type == 'series':
                     removeSeries(imdbID, db_url)
             return "Success"
-        except:
-            return "Failure, something went wrong"
+        except Exception as e:
+            return f"Failure, {str(e)}"
     else:
         return render_template("manage.html")
 
