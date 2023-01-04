@@ -16,7 +16,7 @@ class Metadata:
 
     @staticmethod
     def identify_link(url: str) -> dict:
-        yt_pattern = re.compile(r'(?:https?:\/\/)?(?:[0-9A-Z-]+\.)?(?:youtube|youtu|youtube-nocookie)\.(?:com|be)\/(' 
+        yt_pattern = re.compile(r'(?:https?:\/\/)?(?:[0-9A-Z-]+\.)?(?:youtube|youtu|youtube-nocookie)\.(?:com|be)\/('
                                 r'?:watch\?v=|watch\?.+&v=|embed\/|v\/|.+\?v=)?([^&=\n%\?]{11})')
 
         magnet_pattern = re.compile(r"magnet:\?xt=urn:[a-z0-9]+:[a-zA-Z0-9]{32}")
@@ -75,7 +75,8 @@ class Metadata:
                 if specifiers[0].format(s.zfill(2), e.zfill(2)) in j \
                         or specifiers[0].format(s.zfill(2), e.zfill(2)) in j \
                         or specifiers[1].format(s, e.zfill(2)) in j \
-                        or specifiers[1].format(s, e) in j:
+                        or specifiers[1].format(s, e) in j \
+                        and j.endswith(('.mkv', '.mp4', '.webm', '.mov', '.avi', '.mpg', '.mpeg', '.m4v', '.flv', '.m4p')):
                     x = {'_id': i['id'], 'data': {'title': i['title'], 'fileIdx': files.index(j)}}
                     y = self.identify_link(magnet)
                     x['data'].update(y)

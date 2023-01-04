@@ -16,6 +16,9 @@
     <br>
     <form action="/manage" method="post">
         <div class="form-group">
+            <strong class="form-text text-muted">NOTE:- When adding single episode of a tv show please add in this format, imdbid:season:episode.
+                For example if you're adding s1e8 of some show you'll use imdbid:1:8
+            </strong > <br><br>
             <input class="form-check-input" type="radio" id="add" name="option" value="add">
             <label for="add">Add</label>
             <input class="form-check-input" type="radio" id="remove" name="option" value="remove">
@@ -32,11 +35,11 @@
             <input type="text" name="stream" id="stream" class="form-control" placeholder="Stream Link">
 
             <strong id="dbUrlHelp" class="form-text text-muted">Get DB url <a href="https://www.mongodb.com/">here</a>, for more help read <a href="https://github.com/gautam8404/stream-save/blob/main/README.md">README</a></strong>
+            <br>
+
         </div>
         <br>
         <input id="manage_btn" class="btn btn-primary" type="submit" value="Submit">
-        <br>
-        <small>by adding you agree with our <a href="url">T&C</a> and fair use of this app</small>
     </form>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
