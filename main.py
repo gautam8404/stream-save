@@ -20,15 +20,15 @@ MANIFEST = {
             'movie', 'series'], 'idPrefixes': ['tt']}
     ],
 
-    "types": ["movie", "series"],
+    "types": ["movie", "series", "other"],
 
     'catalogs': [
-        {'type': 'movie', 'id': 'stream_save_movies'},
-        {'type': 'series', 'id': 'stream_save_series'},
+        {'type': 'movie', 'name': 'Saved Movies', 'id': 'stream_save_movies'},
+        {'type': 'series', 'name': 'Saved Series', 'id': 'stream_save_series'},
     ],
 
     'behaviorHints': {
-        'configurable': "true",
+        'configurable': True,
     },
 
     "idPrefixes": ["tt"]
