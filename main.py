@@ -9,18 +9,18 @@ import requests
 BEST_TRACKERS = "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_best.txt"
 
 MANIFEST = {
-    "id": "org.stremio.streamsave",
+    "id": "org.stremio.streamsave-test",
     "version": "0.0.1",
     "name": "Stream Save",
     "description": "save custom stream links and play in different devices",
 
     'resources': [
-        'catalog',
+        'catalogs',
         {'name': 'stream', 'types': [
             'movie', 'series'], 'idPrefixes': ['tt']}
     ],
 
-    "types": [],
+    "types": ["movies", "series"],
 
     'catalogs': [
         {'type': 'Saved', 'id': 'saved_movies', 'name': 'Saved Movies'},
