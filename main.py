@@ -20,7 +20,7 @@ MANIFEST = {
             'movie', 'series'], 'idPrefixes': ['tt']}
     ],
 
-    "types": ["saved","Saved"],
+    "types": ["movie", "series", "saved", "Saved"],
 
     'catalogs': [
         {'type': 'Saved', 'id': 'saved_movies', 'name': 'Saved Movies'},
@@ -61,9 +61,9 @@ def stream(user, passw, cluster, type, id):
     if type not in MANIFEST['types']:
         abort(404)
     streams = {'streams': []}
-    if id == 'saved_movies':
+    if type == 'movie':
         s = movieStreams(client)
-    elif id == 'saved_series':
+    elif type == 'series':
         s = seriesStreams(client)
     else:
         abort(404)
