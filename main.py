@@ -15,11 +15,12 @@ MANIFEST = {
     "description": "save custom stream links and play in different devices",
 
     'resources': [
+        'catalog',
         {'name': 'stream', 'types': [
             'movie', 'series'], 'idPrefixes': ['tt']}
     ],
 
-    "types": ["movie", "series", "Saved"],
+    "types": ["movie", "series", "other"],
 
     'catalogs': [
         {'type': 'Saved', 'id': 'saved_movies', 'name': 'Saved Movies'},
