@@ -59,6 +59,5 @@ def addSeries(id, stream, db_url):
 
     x, y = meta.get_series(id, stream)
     seriescat.add(x)
-
     for i in y:
         seriestream.add(i)

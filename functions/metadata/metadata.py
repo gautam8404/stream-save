@@ -40,13 +40,13 @@ class Metadata:
                 except KeyError:
                     trackers = []
                 try:
-                    name = parsed_magnet_dict['dn']
+                    name = parsed_magnet_dict['dn'][0]
                 except KeyError:
                     name = None
 
                 mg_dict['sources'] = trackers + [f'dht:{infohash.lower()}']
                 mg_dict['name'] = name
-                mg_dict['infohash'] = infohash
+                mg_dict['infoHash'] = infohash
 
                 return mg_dict
 
@@ -59,6 +59,12 @@ class Metadata:
             raise MetaExceptions("Invalid Url")
 
     def get_magnet_streams(self, magnet, res):
+        parsed_magnet = urllib.parse.urlparse(magnet)
+        try:
+            trackers = urllib.parse.parse_qs(parsed_magnet.query)['tr']
+        except KeyError:
+            trackers = []
+
         retries = 20
         ses = lt.session()
         ses.listen_on(6881, 6891)
@@ -157,8 +163,7 @@ class Metadata:
         res = res.json()['meta']
         catalog = self.make_meta(res)
         link = self.identify_link(stream)
-
-        if "infoHash" in link and separate is False:
+        if "infoHash" in list(link.keys()) and separate is False:
             streams = self.get_magnet_streams(stream, res)
         else:
             a = {'description': catalog['name']}
