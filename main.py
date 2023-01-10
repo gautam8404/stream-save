@@ -20,11 +20,11 @@ MANIFEST = {
             'movie', 'series'], 'idPrefixes': ['tt']}
     ],
 
-    "types": ["movie", "series"],
+    "types": ["saved","Saved"],
 
     'catalogs': [
-        {'type': 'movie', 'id': 'stream_save_movies'},
-        {'type': 'series', 'id': 'stream_save_series'},
+        {'type': 'Saved', 'id': 'saved_movies', 'name': 'Saved Movies'},
+        {'type': 'Saved', 'id': 'saved_series', 'name': 'Saved Series'},
     ],
 
     'behaviorHints': {
@@ -61,9 +61,9 @@ def stream(user, passw, cluster, type, id):
     if type not in MANIFEST['types']:
         abort(404)
     streams = {'streams': []}
-    if type == 'movie':
+    if id == 'saved_movies':
         s = movieStreams(client)
-    elif type == 'series':
+    elif id == 'saved_series':
         s = seriesStreams(client)
     else:
         abort(404)
@@ -95,9 +95,9 @@ def addon_catalog(user, passw, cluster, type, id):
     if type not in MANIFEST['types']:
         abort(404)
 
-    if type == 'movie':
+    if type == 'Saved' and id == 'saved_movies':
         catalog = movieCatalog(client)
-    elif type == 'series':
+    elif id == 'saved_series':
         catalog = seriesCatalog(client)
     else:
         abort(404)
