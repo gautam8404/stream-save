@@ -20,7 +20,7 @@ MANIFEST = {
             'movie', 'series'], 'idPrefixes': ['tt']}
     ],
 
-    "types": ["movie", "series", "saved", "Saved"],
+    "types": [],
 
     'catalogs': [
         {'type': 'Saved', 'id': 'saved_movies', 'name': 'Saved Movies'},
@@ -58,7 +58,7 @@ def config_redirect():
 def stream(user, passw, cluster, type, id):
     db_url = f"mongodb+srv://{user}:{passw}@{cluster}.mongodb.net"
     client = MongoClient(db_url)
-    if type not in MANIFEST['types']:
+    if type not in ["movies", "series"]:
         abort(404)
     streams = {'streams': []}
     if type == 'movie':
@@ -92,7 +92,7 @@ def stream(user, passw, cluster, type, id):
 def addon_catalog(user, passw, cluster, type, id):
     db_url = f"mongodb+srv://{user}:{passw}@{cluster}.mongodb.net"
     client = MongoClient(db_url)
-    if type not in MANIFEST['types']:
+    if type not in ["Saved", "saved"]:
         abort(404)
 
     if id == 'saved_movies':
