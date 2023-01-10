@@ -19,7 +19,7 @@ MANIFEST = {
             'movie', 'series'], 'idPrefixes': ['tt']}
     ],
 
-    "types": ["movie", "series"],
+    "types": ["movie", "series", "Saved"],
 
     'catalogs': [
         {'type': 'Saved', 'id': 'saved_movies', 'name': 'Saved Movies'},
