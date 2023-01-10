@@ -40,13 +40,14 @@ class Metadata:
                 except KeyError:
                     trackers = []
                 try:
-                    name = parsed_magnet_dict['dn'][0]
+                    description = parsed_magnet_dict['dn'][0]
                 except KeyError:
-                    name = None
+                    description = None
 
                 mg_dict['sources'] = trackers + [f'dht:{infohash.lower()}']
-                mg_dict['name'] = name
+                mg_dict['name'] = "Stream Save"
                 mg_dict['infoHash'] = infohash
+                mg_dict['description'] = description
 
                 return mg_dict
 
@@ -75,6 +76,8 @@ class Metadata:
             "storage_mode": lt.storage_mode_t(2)
         }
         handle = lt.add_magnet_uri(ses, magnet, params)
+        for tracker in trackers:
+            handle.add_tracker({"url": tracker})
         ses.start_dht()
         while not handle.has_metadata() and retries > 0:
             retries = retries - 1
@@ -108,8 +111,10 @@ class Metadata:
                         or specifiers[1].format(s, e) in j \
                         and j.endswith(
                     ('.mkv', '.mp4', '.webm', '.mov', '.avi', '.mpg', '.mpeg', '.m4v', '.flv', '.m4p')):
-                    x = {'_id': i['id'], 'data': {'description': i['title'], 'fileIdx': files.index(j)}}
+                    x = {'_id': i['id'], 'data': {'fileIdx': files.index(j)}}
                     y = self.identify_link(magnet)
+                    if y['description'] is None:
+                        y['description'] = i['title']
                     x['data'].update(y)
                     streams.append(x)
                     break
@@ -143,10 +148,11 @@ class Metadata:
 
         catalog = self.make_meta(res)
 
-        x = {'description': catalog['name']}
         y = self.identify_link(stream)
-        z = {**x, **y}
-        streams = [{"_id": imdbId, 'data': z}]
+        if y['description'] is None:
+            y['description'] = catalog['title']
+
+        streams = [{"_id": imdbId, 'data': y}]
 
         return catalog, streams
 
@@ -166,9 +172,9 @@ class Metadata:
         if "infoHash" in list(link.keys()) and separate is False:
             streams = self.get_magnet_streams(stream, res)
         else:
-            a = {'description': catalog['name']}
-            b = {**a, **link}
-            streams = [{"_id": imdbId, 'data': b}]
+            if link['description'] is None:
+                link['description'] = catalog['title']
+            streams = [{"_id": imdbId, 'data': link}]
 
         return catalog, streams
 

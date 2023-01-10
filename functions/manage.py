@@ -20,8 +20,12 @@ def removeMovie(id, db_url):
 
 def removeSeries(id, db_url):
     client = MongoClient(db_url)
-    seriescat = seriesCatalog(client)
     seriestream = seriesStreams(client)
+    if ":" in id:
+        rem = {"_id": id}
+        seriestream.remove(rem)
+
+    seriescat = seriesCatalog(client)
     videos = requests.get(CINEMETA_URL.format("series", id)).json()['meta']['videos']
     rem = {"_id": id}
     seriescat.remove(rem)
