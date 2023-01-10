@@ -10,7 +10,7 @@ BEST_TRACKERS = "https://raw.githubusercontent.com/ngosang/trackerslist/master/t
 
 MANIFEST = {
     "id": "org.stremio.streamsave",
-    "version": "0.0.1",
+    "version": "0.0.3",
     "name": "Stream Save",
     "description": "save custom stream links and play in different devices",
 
@@ -23,8 +23,8 @@ MANIFEST = {
     "types": ["movie", "series"],
 
     'catalogs': [
-        {'type': 'movie', 'id': 'saved_movies', 'name': 'Saved Movies'},
-        {'type': 'series', 'id': 'saved_series', 'name': 'Saved Series'},
+        {'type': 'movie', 'id': 'stream_save_movies', 'name': "Saved Movies"},
+        {'type': 'series', 'id': 'stream_save_series', 'name': "Saved Series"},
     ],
 
     'behaviorHints': {
@@ -95,9 +95,9 @@ def addon_catalog(user, passw, cluster, type, id):
     if type not in MANIFEST["types"]:
         abort(404)
 
-    if id == 'saved_movies':
+    if type == 'movie':
         catalog = movieCatalog(client)
-    elif id == 'saved_series':
+    elif type == 'series':
         catalog = seriesCatalog(client)
     else:
         abort(404)
