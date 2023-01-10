@@ -23,8 +23,8 @@ MANIFEST = {
     "types": ["movie", "series"],
 
     'catalogs': [
-        {'type': 'movie', 'id': 'stream_save_movies', 'name': "Saved Movies"},
-        {'type': 'series', 'id': 'stream_save_series', 'name': "Saved Series"},
+        {'type': 'movie', 'id': 'stream_save_movies'},
+        {'type': 'series', 'id': 'stream_save_series'},
     ],
 
     'behaviorHints': {
