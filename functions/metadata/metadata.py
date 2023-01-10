@@ -5,6 +5,7 @@ import time
 import libtorrent as lt
 
 import requests
+import urllib.parse
 
 
 class Metadata:
@@ -15,7 +16,10 @@ class Metadata:
         self.base_url = "https://cinemeta-live.strem.io/meta/{}/{}.json"
 
     @staticmethod
-    def identify_link(url: str) -> dict:
+    def append_tracker(tracker):
+        return "tracker:" + tracker
+
+    def identify_link(self, url: str) -> dict:
         yt_pattern = re.compile(r'(?:https?:\/\/)?(?:[0-9A-Z-]+\.)?(?:youtube|youtu|youtube-nocookie)\.(?:com|be)\/('
                                 r'?:watch\?v=|watch\?.+&v=|embed\/|v\/|.+\?v=)?([^&=\n%\?]{11})')
 
@@ -24,14 +28,34 @@ class Metadata:
         res = yt_pattern.findall(url)
         try:
             if res:
-                return {"ytId": res}
+                return {"ytId": res[0]}
             elif magnet_pattern.match(url) is not None:
-                return {"infoHash": url.split("btih:")[1].split("&")[0]}
+                mg_dict = {}
+                parsed_magnet = urllib.parse.urlparse(url)
+                parsed_magnet_dict = urllib.parse.parse_qs(parsed_magnet.query)
+                infohash = parsed_magnet_dict['xt'][0].split(':')[-1]
+                try:
+                    trackers = parsed_magnet_dict['tr']
+                    trackers = list(map(self.append_tracker, trackers))
+                except KeyError:
+                    trackers = []
+                try:
+                    name = parsed_magnet_dict['dn']
+                except KeyError:
+                    name = None
+
+                mg_dict['sources'] = trackers + [f'dht:{infohash.lower()}']
+                mg_dict['name'] = name
+                mg_dict['infohash'] = infohash
+
+                return mg_dict
+
             elif url.startswith(("http", "https")) and url.endswith(("mp4", "mkv")):
                 return {"url": url}
             else:
                 return {"url": None}
-        except:
+        except Exception as e:
+            print(e)
             raise MetaExceptions("Invalid Url")
 
     def get_magnet_streams(self, magnet, res):
@@ -76,8 +100,9 @@ class Metadata:
                         or specifiers[0].format(s.zfill(2), e.zfill(2)) in j \
                         or specifiers[1].format(s, e.zfill(2)) in j \
                         or specifiers[1].format(s, e) in j \
-                        and j.endswith(('.mkv', '.mp4', '.webm', '.mov', '.avi', '.mpg', '.mpeg', '.m4v', '.flv', '.m4p')):
-                    x = {'_id': i['id'], 'data': {'title': i['title'], 'fileIdx': files.index(j)}}
+                        and j.endswith(
+                    ('.mkv', '.mp4', '.webm', '.mov', '.avi', '.mpg', '.mpeg', '.m4v', '.flv', '.m4p')):
+                    x = {'_id': i['id'], 'data': {'description': i['title'], 'fileIdx': files.index(j)}}
                     y = self.identify_link(magnet)
                     x['data'].update(y)
                     streams.append(x)
@@ -111,7 +136,8 @@ class Metadata:
         res = res.json()['meta']
 
         catalog = self.make_meta(res)
-        x = {'title': catalog['name']}
+
+        x = {'description': catalog['name']}
         y = self.identify_link(stream)
         z = {**x, **y}
         streams = [{"_id": imdbId, 'data': z}]
@@ -135,7 +161,7 @@ class Metadata:
         if "infoHash" in link and separate is False:
             streams = self.get_magnet_streams(stream, res)
         else:
-            a = {'title': catalog['name']}
+            a = {'description': catalog['name']}
             b = {**a, **link}
             streams = [{"_id": imdbId, 'data': b}]
 

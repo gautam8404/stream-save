@@ -2,7 +2,11 @@ from flask import Flask, request, jsonify, abort, redirect, render_template
 from functions.mongo.seriesdb import seriesStreams, seriesCatalog
 from functions.mongo.moviedb import movieStreams, movieCatalog
 from functions.manage import addMovie, addSeries, removeMovie, removeSeries
+from functions.metadata.metadata import Metadata
 from pymongo import MongoClient
+import requests
+
+BEST_TRACKERS = "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_best.txt"
 
 MANIFEST = {
     "id": "org.stremio.streamsave",
@@ -68,7 +72,17 @@ def stream(user, passw, cluster, type, id):
     a = s.find(id)
 
     if a is not None:
-        streams['streams'].append(a['data'])
+        trackers = requests.get(BEST_TRACKERS).text.split()
+        trackers = list(map(Metadata.append_tracker, trackers))
+        stream = a['data']
+        if 'sources' not in stream.keys():
+            stream['sources'] = []
+
+        print(stream)
+        sources = stream['sources']
+        stream['sources'] = trackers + sources
+        streams['streams'].append(stream)
+
     return respond_with(streams)
 
 
@@ -127,7 +141,10 @@ def manage():
         options = request.form['option']
         type = request.form['type']
         imdbID = request.form['imdbID']
-        stream = request.form['stream']
+        if options == 'add':
+            stream = request.form['stream']
+        else:
+            stream = None
 
         try:
             if options == 'add':
@@ -153,4 +170,4 @@ def default():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
