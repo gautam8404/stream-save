@@ -9,13 +9,12 @@ import requests
 BEST_TRACKERS = "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_best.txt"
 
 MANIFEST = {
-    "id": "org.stremio.streamsave-test",
+    "id": "org.stremio.streamsave",
     "version": "0.0.1",
     "name": "Stream Save",
     "description": "save custom stream links and play in different devices",
 
     'resources': [
-        'catalogs',
         {'name': 'stream', 'types': [
             'movie', 'series'], 'idPrefixes': ['tt']}
     ],
@@ -58,7 +57,7 @@ def config_redirect():
 def stream(user, passw, cluster, type, id):
     db_url = f"mongodb+srv://{user}:{passw}@{cluster}.mongodb.net"
     client = MongoClient(db_url)
-    if type not in ["movies", "series"]:
+    if type not in ["movie", "series"]:
         abort(404)
     streams = {'streams': []}
     if type == 'movie':
