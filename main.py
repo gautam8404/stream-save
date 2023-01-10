@@ -9,7 +9,7 @@ import requests
 BEST_TRACKERS = "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_best.txt"
 
 MANIFEST = {
-    "id": "org.stremio.streamsave",
+    "id": "org.stremio.streamsave-test",
     "version": "0.0.1",
     "name": "Stream Save",
     "description": "save custom stream links and play in different devices",
@@ -72,15 +72,17 @@ def stream(user, passw, cluster, type, id):
     a = s.find(id)
 
     if a is not None:
-        trackers = requests.get(BEST_TRACKERS).text.split()
-        trackers = list(map(Metadata.append_tracker, trackers))
         stream = a['data']
-        if 'sources' not in stream.keys():
-            stream['sources'] = []
-
         print(stream)
-        sources = stream['sources']
-        stream['sources'] = trackers + sources
+        if "infoHash" in list(stream.keys()):
+            trackers = requests.get(BEST_TRACKERS).text.split()
+            trackers = list(map(Metadata.append_tracker, trackers))
+            if 'sources' not in stream.keys():
+                stream['sources'] = []
+
+            sources = stream['sources']
+            stream['sources'] = trackers + sources
+
         streams['streams'].append(stream)
 
     return respond_with(streams)

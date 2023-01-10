@@ -26,9 +26,11 @@ class Metadata:
         magnet_pattern = re.compile(r"magnet:\?xt=urn:[a-z0-9]+:[a-zA-Z0-9]{32}")
 
         res = yt_pattern.findall(url)
+        common_dict = {'description': None}
         try:
             if res:
-                return {"ytId": res[0]}
+                common_dict["ytId"] = res[0]
+                return common_dict
             elif magnet_pattern.match(url) is not None:
                 mg_dict = {}
                 parsed_magnet = urllib.parse.urlparse(url)
@@ -51,10 +53,12 @@ class Metadata:
 
                 return mg_dict
 
-            elif url.startswith(("http", "https")) and url.endswith(("mp4", "mkv")):
-                return {"url": url}
+            elif url.startswith(("http", "https")):
+                common_dict["url"] = url
+                return common_dict
             else:
-                return {"url": None}
+                common_dict["url"] = None
+                return common_dict
         except Exception as e:
             print(e)
             raise MetaExceptions("Invalid Url")
@@ -149,8 +153,9 @@ class Metadata:
         catalog = self.make_meta(res)
 
         y = self.identify_link(stream)
+        print(catalog)
         if y['description'] is None:
-            y['description'] = catalog['title']
+            y['description'] = catalog['name']
 
         streams = [{"_id": imdbId, 'data': y}]
 
@@ -173,7 +178,7 @@ class Metadata:
             streams = self.get_magnet_streams(stream, res)
         else:
             if link['description'] is None:
-                link['description'] = catalog['title']
+                link['description'] = catalog['name']
             streams = [{"_id": imdbId, 'data': link}]
 
         return catalog, streams
