@@ -95,7 +95,7 @@ def addon_catalog(user, passw, cluster, type, id):
     if type not in MANIFEST['types']:
         abort(404)
 
-    if type == 'Saved' and id == 'saved_movies':
+    if id == 'saved_movies':
         catalog = movieCatalog(client)
     elif id == 'saved_series':
         catalog = seriesCatalog(client)
